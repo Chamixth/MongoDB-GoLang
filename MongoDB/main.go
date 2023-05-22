@@ -146,3 +146,8 @@ func main() {
 	log.Println("Server started on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
+
+//https://www.thepolyglotdeveloper.com/2019/02/developing-restful-api-golang-mongodb-nosql-database/
+//https://github.com/Dankuzo1/convencionAPI/blob/master/convencionAPI/01EjemploMongodb/main.go
+//https://github.com/AthithyaJayadevan/mongo_go/blob/master/main.go
+//https://www.leonvillamayor.org/2018/12/api-restful-con-golang/
