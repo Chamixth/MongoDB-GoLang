@@ -151,3 +151,5 @@ func main() {
 //https://github.com/Dankuzo1/convencionAPI/blob/master/convencionAPI/01EjemploMongodb/main.go
 //https://github.com/AthithyaJayadevan/mongo_go/blob/master/main.go
 //https://www.leonvillamayor.org/2018/12/api-restful-con-golang/
+//https://www.youtube.com/watch?v=VzBGi_n65iU
+//https://www.youtube.com/watch?v=zICaTPBkupY

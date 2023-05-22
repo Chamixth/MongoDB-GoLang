@@ -151,3 +151,5 @@ func (uc *UserController) DeleteUser(w http.ResponseWriter, r *http.Request, p h
 	//Return a status ok response
 	w.WriteHeader(http.StatusOK)
 }
+
+//https://www.youtube.com/watch?v=zICaTPBkupY
