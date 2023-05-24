@@ -3,24 +3,31 @@ package main
 import (
 	"MongoDB2/controllers"
 	"context"
-	"github.com/julienschmidt/httprouter"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"net/http"
 )
 
 func main() {
-	//Initialize the router
-	r := httprouter.New()
-	//Crete a new instance of the user controller
+	// Initialize Echo
+	e := echo.New()
+
+	// Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	// Create a new instance of the user controller
 	uc := controllers.NewUserController(getClient())
-	//Define the routed and their respective handlers
-	r.GET("/user/:id", uc.GetUser)
-	r.POST("/user/", uc.CreateUser)
-	r.PATCH("/user/:id", uc.UpdateUser)
-	r.DELETE("/user/:id", uc.DeleteUser)
-	//Start the server
-	http.ListenAndServe("Localhost:8000", r)
+
+	// Define the routes and their respective handlers
+	e.GET("/user/:id", uc.GetUser)
+	e.POST("/user/", uc.CreateUser)
+	e.PATCH("/user/:id", uc.UpdateUser)
+	e.DELETE("/user/:id", uc.DeleteUser)
+
+	// Start the server
+	e.Start(":8000")
 }
 
 func getClient() *mongo.Client {
