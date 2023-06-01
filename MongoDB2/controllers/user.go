@@ -4,12 +4,11 @@ import (
 	"MongoDB2/models"
 	"context"
 	"encoding/json"
-	"net/http"
-
 	"github.com/labstack/echo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"net/http"
 )
 
 type UserController struct {

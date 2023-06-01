@@ -26,6 +26,7 @@ func main() {
 	e.PATCH("/user/:id", uc.UpdateUser)
 	e.DELETE("/user/:id", uc.DeleteUser)
 
+
 	// Start the server
 	e.Start(":8000")
 }
