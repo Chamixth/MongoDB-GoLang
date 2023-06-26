@@ -19,6 +19,22 @@ type User struct {
 	Password string `json:"password"`
 }
 
+// LoginRequest represents the request body for user login
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// LoginResponse represents the response body for user login
+type LoginResponse struct {
+	Token string `json:"Login is Successfull."`
+}
+
+// SignupResponse represent the response body for user signup
+type SignUpResponse struct {
+	Token string `json:""Signup is Successfull""`
+}
+
 // MongoDB configuration
 const (
 	uri        = "mongodb+srv://chamith:123@cluster0.ujlq82i.mongodb.net/?retryWrites=true&w=majority"
@@ -61,7 +77,12 @@ func CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, user)
+	token := generateToken(user.Username)
+	signUpResponse := SignUpResponse{
+		Token: token,
+	}
+
+	return c.JSON(http.StatusCreated, signUpResponse)
 }
 
 // GetUser retrieves a user record by username
@@ -112,6 +133,70 @@ func DeleteUser(c echo.Context) error {
 	return c.String(http.StatusOK, "User deleted successfully")
 }
 
+// Login handles user login
+func Login(c echo.Context) error {
+	var loginRequest LoginRequest
+	err := c.Bind(&loginRequest)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	// Check if the user exists and password is correct
+	var user User
+	err = coll.FindOne(context.TODO(), bson.M{
+		"username": loginRequest.Username,
+		"password": loginRequest.Password,
+	}).Decode(&user)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, "Invalid username or password")
+	}
+
+	// Generate and return a token as the response
+
+	token := generateToken(user.Username)
+	loginResponse := LoginResponse{
+		Token: token,
+	}
+
+	return c.JSON(http.StatusOK, loginResponse)
+}
+func getAll(c echo.Context) error {
+	var users []bson.D
+	cursor, err := coll.Find(context.TODO(), bson.D{})
+	if err != nil {
+		c.Logger().Print(err)
+		return err
+	}
+	if err = cursor.All(context.TODO(), &users); err != nil {
+		c.Logger().Print(err)
+		return err
+	}
+
+	var response []User
+	for _, result := range users {
+		var user User
+		for _, elem := range result {
+			switch elem.Key {
+			case "username":
+				user.Username = elem.Value.(string)
+			case "email":
+				user.Email = elem.Value.(string)
+			case "password":
+				user.Password = elem.Value.(string)
+			}
+		}
+		response = append(response, user)
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+// generateToken generates a token for the given username
+func generateToken(username string) string {
+
+	return username
+}
+
 func main() {
 	// Initialize MongoDB connection
 	err := Initialize()
@@ -127,6 +212,8 @@ func main() {
 	e.GET("/users/:username", GetUser)
 	e.PUT("/users/:username", UpdateUser)
 	e.DELETE("/users/:username", DeleteUser)
+	e.POST("/login", Login)
+	e.GET("/getAll", getAll)
 
 	// Start the server
 	log.Println("Server started on port 8080")
